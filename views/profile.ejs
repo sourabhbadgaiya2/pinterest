@@ -1,0 +1,95 @@
+<%- include("./partials/header") %> <%- include("./partials/navbar") %>
+
+<main class="container mx-auto mt-8 px-6">
+  <div class="text-center relative">
+    <!-- Profile Image Wrapper -->
+    <div
+      class="w-24 h-24 mx-auto bg-gray-300 rounded-full overflow-hidden relative"
+    >
+      <!-- Profile Image -->
+      <img
+        src="<%= user.image %>"
+        alt="Profile Image"
+        class="w-full h-full object-cover"
+      />
+
+      <!-- Pencil Icon for Editing Profile Image -->
+      <button
+        id="uploadicon"
+        class="absolute bottom-0 right-0 bg-white text-gray-700 rounded-full p-3 shadow-lg hover:bg-gray-200"
+        title="Edit Profile Picture"
+      >
+        <i class="ri-pencil-line"></i>
+      </button>
+      <!-- Hidden Form for Uploading Profile Image -->
+      <div
+        id="uploadform"
+        class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden"
+      >
+        <form action="/fileupload" method="post" enctype="multipart/form-data">
+          <input type="file" name="profileImage" class="hidden" />
+        </form>
+      </div>
+    </div>
+    <h1 class="text-2xl font-bold mt-4"><%= user.name %></h1>
+
+    <p class="text-gray-600"><%= user.email %></p>
+
+    <p class="text-gray-500 mt-2">0 following</p>
+    <div class="flex justify-center space-x-4 mt-4">
+      <button class="bg-gray-200 px-4 py-2 rounded-full">Share</button>
+      <!-- Edit Profile Button -->
+      <button
+        class="bg-gray-200 px-4 py-2 rounded-full flex items-center space-x-2"
+      >
+        <i class="ri-pencil-line"></i>
+        <span>Edit Profile</span>
+      </button>
+    </div>
+  </div>
+  <div class="mt-8">
+    <div class="flex justify-center border-b">
+      <button class="px-4 py-2 text-red-500 border-b-2 border-red-500">
+        Created
+      </button>
+      <button class="px-4 py-2 text-gray-700">Saved</button>
+    </div>
+    <div class="text-center mt-4">
+      <a href="/createpin"
+        ><button class="bg-red-500 text-white px-4 py-2 rounded-full mt-4">
+          Create Pin
+        </button></a
+      >
+    </div>
+  </div>
+  <div class="card flex flex-wrap gap-10 mt-4 px-10">
+    <div class="card">
+      <div class="cards w-48 h-40 bg-zinc-500 rounded-lg overflow-hidden">
+        <img
+          class="w-full h-full object-cover"
+          src="https://i.pinimg.com/736x/db/66/14/db661437d455d09fa0737281fd73e696.jpg"
+          alt="Rounded Image"
+        />
+      </div>
+    </div>
+  </div>
+</main>
+<footer class="fixed bottom-4 right-4">
+  <button class="bg-gray-200 p-2 rounded-full shadow-lg">?</button>
+</footer>
+
+<script>
+  // JavaScript for triggering the file input and submitting the form
+  document.querySelector("#uploadicon").addEventListener("click", function () {
+    const fileInput = document.querySelector("#uploadform input[type='file']");
+    fileInput.click(); // Simulate a click on the file input
+  });
+
+  document
+    .querySelector("#uploadform input[type='file']")
+    .addEventListener("change", function () {
+      this.closest("form").submit(); // Submit the form after file selection
+    });
+</script>
+
+<%- include("./partials/footer") %>
