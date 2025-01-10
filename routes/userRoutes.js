@@ -4,6 +4,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const authMiddleware = require("../middleware/authMiddleware");
 const passport = require("passport");
+const upload = require("../middleware/multer");
+const Post = require("../models/postModel");
 
 const router = express.Router();
 
@@ -127,19 +129,49 @@ router.get("/logout", (req, res) => {
 });
 
 // Home route GET
-router.get("/home", authMiddleware, (req, res) => {
-  res.render("home", { title: "Home" });
+router.get("/home", authMiddleware, async (req, res) => {
+  const posts = await Post.find().populate("user");
+  res.render("home", { title: "Home", posts });
 });
 // Profile route GET
 router.get("/profile", authMiddleware, async (req, res) => {
-  const user = await User.findById(req.id);
+  const user = await User.findById(req.id).populate("posts");
   // console.log("profile", user);
   res.render("profile", { title: "Profile", user });
 });
 
+// ----------------------------------------Post Creation----------------------------------------
 // Create Post route GET
 router.get("/create", authMiddleware, (req, res) => {
   res.render("create", { title: "Create Post" });
 });
+
+// Create Post route POST
+router.post(
+  "/create",
+  authMiddleware,
+  upload.single("image"),
+  async (req, res) => {
+    try {
+      const { title, description } = req.body;
+
+      const image = req.file.filename;
+      const post = await Post.create({
+        title,
+        description,
+        image,
+        user: req.id,
+      });
+
+      const user = await User.findById(req.id);
+      user.posts.push(post);
+      await user.save();
+      res.redirect("/home");
+    } catch (error) {
+      console.log(error.message);
+      res.status(400).send("Error in creating post. Please try again.");
+    }
+  }
+);
 
 module.exports = router;
